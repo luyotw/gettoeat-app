@@ -98,6 +98,7 @@ void main() {
       expect(columnNames, contains('store_id'));
       expect(columnNames, contains('name'));
       expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
     });
 
     test('驗證 categories 資料表存在且結構正確', () async {
@@ -381,6 +382,56 @@ void main() {
       expect(firstCount, 1);
       expect(secondCount, 1);
       expect(database2.isOpen, isTrue);
+    });
+  });
+
+  group('外鍵約束測試', () {
+    late Database database;
+
+    setUpAll(() async {
+      // 重置資料庫實例並建立新的資料庫
+      AppDatabase.resetInstance();
+      await databaseFactory.deleteDatabase(path.join(await getDatabasesPath(), 'gettoeat.db'));
+      final db = AppDatabase();
+      database = await db.database;
+    });
+
+    test('驗證外鍵約束有效（插入無效的 store_id 應失敗）', () async {
+      // Arrange - 嘗試插入一個不存在的 store_id
+      final invalidStoreId = 999;
+
+      // Act & Assert - 預期會拋出外鍵約束錯誤
+      expect(
+        () async => await database.insert('staffs', {
+          'store_id': invalidStoreId,
+          'name': '測試員工',
+          'code': '9999',
+          'off': 0,
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        }),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('驗證外鍵約束有效（插入無效的 category_id 應失敗）', () async {
+      // Arrange - 嘗試插入一個不存在的 category_id
+      final invalidCategoryId = 999;
+
+      // Act & Assert - 預期會拋出外鍵約束錯誤
+      expect(
+        () async => await database.insert('products', {
+          'store_id': 1,
+          'category_id': invalidCategoryId,
+          'name': '測試商品',
+          'price': 100.0,
+          'position': 0,
+          'off': 0,
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        }),
+        throwsA(isA<Exception>()),
+      );
     });
   });
 }

@@ -70,6 +70,7 @@ class AppDatabase {
         store_id INTEGER NOT NULL DEFAULT 1,
         name TEXT NOT NULL,
         created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
         FOREIGN KEY (store_id) REFERENCES stores(id)
       )
     ''');
@@ -201,7 +202,9 @@ class AppDatabase {
         created_by INTEGER,
         updated_at TEXT NOT NULL,
         updated_by INTEGER,
-        FOREIGN KEY (staff_id) REFERENCES staffs(id)
+        FOREIGN KEY (staff_id) REFERENCES staffs(id),
+        FOREIGN KEY (created_by) REFERENCES staffs(id),
+        FOREIGN KEY (updated_by) REFERENCES staffs(id)
       )
     ''');
 
