@@ -188,6 +188,56 @@ class AppDatabase {
         FOREIGN KEY (event_id) REFERENCES events(id)
       )
     ''');
+
+    // 10. 建立 punch_logs 資料表（依賴 staffs）
+    await db.execute('''
+      CREATE TABLE punch_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        staff_id INTEGER NOT NULL,
+        type INTEGER NOT NULL,
+        timestamp TEXT NOT NULL,
+        ip_address TEXT,
+        created_at TEXT NOT NULL,
+        created_by INTEGER,
+        updated_at TEXT NOT NULL,
+        updated_by INTEGER,
+        FOREIGN KEY (staff_id) REFERENCES staffs(id)
+      )
+    ''');
+
+    // 11. 建立 shifts 資料表（依賴 stores, staffs）
+    await db.execute('''
+      CREATE TABLE shifts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        store_id INTEGER NOT NULL DEFAULT 1,
+        open_amount REAL NOT NULL DEFAULT 0,
+        close_amount REAL,
+        paid_out REAL NOT NULL DEFAULT 0,
+        paid_in REAL NOT NULL DEFAULT 0,
+        adjustment_type TEXT,
+        adjustment_amount REAL NOT NULL DEFAULT 0,
+        adjustment_by INTEGER,
+        note TEXT,
+        created_at TEXT NOT NULL,
+        created_by INTEGER,
+        FOREIGN KEY (store_id) REFERENCES stores(id),
+        FOREIGN KEY (created_by) REFERENCES staffs(id),
+        FOREIGN KEY (adjustment_by) REFERENCES staffs(id)
+      )
+    ''');
+
+    // 12. 建立 tables_info 資料表（依賴 stores）
+    await db.execute('''
+      CREATE TABLE tables_info (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        store_id INTEGER NOT NULL DEFAULT 1,
+        version INTEGER NOT NULL DEFAULT 1,
+        data TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (store_id) REFERENCES stores(id)
+      )
+    ''');
   }
 
   /// 資料庫版本升級處理
