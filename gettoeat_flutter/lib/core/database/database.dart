@@ -238,6 +238,34 @@ class AppDatabase {
         FOREIGN KEY (store_id) REFERENCES stores(id)
       )
     ''');
+
+    // 插入初始資料
+    await _insertInitialData(db);
+  }
+
+  /// 插入初始資料（預設門店和管理員）
+  Future<void> _insertInitialData(Database db) async {
+    final now = DateTime.now().toIso8601String();
+
+    // 插入預設門店
+    await db.insert('stores', {
+      'account': 'default',
+      'nickname': '我的餐廳',
+      'date_change_at': '04:00',
+      'payment_methods': '["cash","card","mobile"]',
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    // 插入預設管理員
+    await db.insert('staffs', {
+      'store_id': 1,
+      'name': '管理員',
+      'code': '0000',
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
   }
 
   /// 資料庫版本升級處理
