@@ -105,6 +105,89 @@ class AppDatabase {
         FOREIGN KEY (store_id) REFERENCES stores(id)
       )
     ''');
+
+    // 5. 建立 products 資料表（依賴 stores, categories）
+    await db.execute('''
+      CREATE TABLE products (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        store_id INTEGER NOT NULL DEFAULT 1,
+        category_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        price REAL NOT NULL,
+        position INTEGER NOT NULL DEFAULT 0,
+        off INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (store_id) REFERENCES stores(id),
+        FOREIGN KEY (category_id) REFERENCES categories(id)
+      )
+    ''');
+
+    // 6. 建立 bills 資料表（依賴 stores, staffs）
+    await db.execute('''
+      CREATE TABLE bills (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        store_id INTEGER NOT NULL DEFAULT 1,
+        table_name TEXT,
+        customers INTEGER,
+        price REAL NOT NULL,
+        final_price REAL NOT NULL,
+        payment_method TEXT,
+        ordered_at TEXT NOT NULL,
+        paid_at TEXT,
+        created_by INTEGER,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (store_id) REFERENCES stores(id),
+        FOREIGN KEY (created_by) REFERENCES staffs(id)
+      )
+    ''');
+
+    // 7. 建立 bill_items 資料表（依賴 bills, products，包含級聯刪除）
+    await db.execute('''
+      CREATE TABLE bill_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        bill_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        product_name TEXT NOT NULL,
+        unit_price REAL NOT NULL,
+        amount INTEGER NOT NULL,
+        subtotal REAL NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products(id)
+      )
+    ''');
+
+    // 8. 建立 events 資料表（依賴 stores）
+    await db.execute('''
+      CREATE TABLE events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        store_id INTEGER NOT NULL DEFAULT 1,
+        type TEXT NOT NULL,
+        title TEXT NOT NULL,
+        start_at TEXT,
+        end_at TEXT,
+        config TEXT,
+        off INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (store_id) REFERENCES stores(id)
+      )
+    ''');
+
+    // 9. 建立 bill_discounts 資料表（依賴 bills, events，包含級聯刪除）
+    await db.execute('''
+      CREATE TABLE bill_discounts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        bill_id INTEGER NOT NULL,
+        event_id INTEGER,
+        title TEXT NOT NULL,
+        value REAL NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE,
+        FOREIGN KEY (event_id) REFERENCES events(id)
+      )
+    ''');
   }
 
   /// 資料庫版本升級處理
