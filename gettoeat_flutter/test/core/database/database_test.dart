@@ -265,4 +265,84 @@ void main() {
       expect(columnNames, contains('updated_at'));
     });
   });
+
+  group('初始資料測試', () {
+    late Database database;
+
+    setUpAll(() async {
+      // 重置資料庫實例並建立新的資料庫
+      AppDatabase.resetInstance();
+      await databaseFactory.deleteDatabase(path.join(await getDatabasesPath(), 'gettoeat.db'));
+      final db = AppDatabase();
+      database = await db.database;
+    });
+
+    test('驗證預設門店資料成功插入', () async {
+      // Act
+      final stores = await database.query('stores');
+
+      // Assert
+      expect(stores, isNotEmpty);
+      expect(stores.length, 1);
+    });
+
+    test('驗證預設門店資料欄位值正確', () async {
+      // Act
+      final stores = await database.query('stores');
+      final defaultStore = stores.first;
+
+      // Assert
+      expect(defaultStore['id'], 1);
+      expect(defaultStore['account'], 'default');
+      expect(defaultStore['nickname'], '我的餐廳');
+      expect(defaultStore['date_change_at'], '04:00');
+      expect(defaultStore['payment_methods'], '["cash","card","mobile"]');
+      expect(defaultStore['created_at'], isNotNull);
+      expect(defaultStore['updated_at'], isNotNull);
+    });
+
+    test('驗證預設管理員資料成功插入', () async {
+      // Act
+      final staffs = await database.query('staffs');
+
+      // Assert
+      expect(staffs, isNotEmpty);
+      expect(staffs.length, 1);
+    });
+
+    test('驗證預設管理員資料欄位值正確', () async {
+      // Act
+      final staffs = await database.query('staffs');
+      final defaultAdmin = staffs.first;
+
+      // Assert
+      expect(defaultAdmin['id'], 1);
+      expect(defaultAdmin['store_id'], 1);
+      expect(defaultAdmin['name'], '管理員');
+      expect(defaultAdmin['code'], '0000');
+      expect(defaultAdmin['off'], 0);
+      expect(defaultAdmin['created_at'], isNotNull);
+      expect(defaultAdmin['updated_at'], isNotNull);
+    });
+
+    test('驗證時間戳格式為 ISO8601', () async {
+      // Act
+      final stores = await database.query('stores');
+      final defaultStore = stores.first;
+
+      // Assert - ISO8601 格式驗證
+      final createdAt = defaultStore['created_at'] as String;
+      final updatedAt = defaultStore['updated_at'] as String;
+
+      // 嘗試解析 ISO8601 格式，如果格式正確不會拋出異常
+      expect(() => DateTime.parse(createdAt), returnsNormally);
+      expect(() => DateTime.parse(updatedAt), returnsNormally);
+
+      // 驗證解析後的時間是有效的
+      final createdDateTime = DateTime.parse(createdAt);
+      final updatedDateTime = DateTime.parse(updatedAt);
+      expect(createdDateTime.year, greaterThan(2020));
+      expect(updatedDateTime.year, greaterThan(2020));
+    });
+  });
 }
