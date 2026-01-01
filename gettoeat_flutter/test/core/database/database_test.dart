@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:gettoeat_flutter/core/database/database.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   // 初始化 sqflite_ffi 用於測試環境
@@ -35,7 +36,10 @@ void main() {
   group('資料表結構測試', () {
     late Database database;
 
-    setUp(() async {
+    setUpAll(() async {
+      // 重置資料庫實例並建立新的資料庫
+      AppDatabase.resetInstance();
+      await databaseFactory.deleteDatabase(path.join(await getDatabasesPath(), 'gettoeat.db'));
       final db = AppDatabase();
       database = await db.database;
     });
