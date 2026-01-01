@@ -345,4 +345,42 @@ void main() {
       expect(updatedDateTime.year, greaterThan(2020));
     });
   });
+
+  group('資料庫版本遷移測試', () {
+    test('驗證資料庫版本號為 1', () async {
+      // Arrange & Act
+      AppDatabase.resetInstance();
+      await databaseFactory.deleteDatabase(path.join(await getDatabasesPath(), 'gettoeat.db'));
+      final db = AppDatabase();
+      final database = await db.database;
+
+      // Assert
+      final version = await database.getVersion();
+      expect(version, 1);
+    });
+
+    test('驗證重複初始化不會報錯或重複插入資料', () async {
+      // Arrange
+      AppDatabase.resetInstance();
+      await databaseFactory.deleteDatabase(path.join(await getDatabasesPath(), 'gettoeat.db'));
+
+      // Act - 第一次初始化
+      final db1 = AppDatabase();
+      final database1 = await db1.database;
+      final storesCount1 = await database1.rawQuery('SELECT COUNT(*) as count FROM stores');
+      final firstCount = storesCount1.first['count'] as int;
+
+      // Act - 重置並再次初始化（模擬重複啟動應用）
+      AppDatabase.resetInstance();
+      final db2 = AppDatabase();
+      final database2 = await db2.database;
+      final storesCount2 = await database2.rawQuery('SELECT COUNT(*) as count FROM stores');
+      final secondCount = storesCount2.first['count'] as int;
+
+      // Assert - 確認資料沒有重複插入
+      expect(firstCount, 1);
+      expect(secondCount, 1);
+      expect(database2.isOpen, isTrue);
+    });
+  });
 }
