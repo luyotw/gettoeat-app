@@ -31,4 +31,234 @@ void main() {
       expect(database1, equals(database2));
     });
   });
+
+  group('資料表結構測試', () {
+    late Database database;
+
+    setUp(() async {
+      final db = AppDatabase();
+      database = await db.database;
+    });
+
+    test('驗證 stores 資料表存在且結構正確', () async {
+      // Act
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='stores'",
+      );
+
+      // Assert
+      expect(result, isNotEmpty);
+      expect(result.first['name'], 'stores');
+
+      // 驗證欄位結構
+      final columns = await database.rawQuery('PRAGMA table_info(stores)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('account'));
+      expect(columnNames, contains('nickname'));
+      expect(columnNames, contains('date_change_at'));
+      expect(columnNames, contains('payment_methods'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
+    });
+
+    test('驗證 staffs 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='staffs'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(staffs)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('group_id'));
+      expect(columnNames, contains('name'));
+      expect(columnNames, contains('email'));
+      expect(columnNames, contains('phone'));
+      expect(columnNames, contains('code'));
+      expect(columnNames, contains('off'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
+    });
+
+    test('驗證 staff_groups 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='staff_groups'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(staff_groups)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('name'));
+      expect(columnNames, contains('created_at'));
+    });
+
+    test('驗證 categories 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='categories'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(categories)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('name'));
+      expect(columnNames, contains('off'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
+    });
+
+    test('驗證 products 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='products'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(products)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('category_id'));
+      expect(columnNames, contains('name'));
+      expect(columnNames, contains('price'));
+      expect(columnNames, contains('position'));
+      expect(columnNames, contains('off'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
+    });
+
+    test('驗證 bills 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='bills'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(bills)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('table_name'));
+      expect(columnNames, contains('customers'));
+      expect(columnNames, contains('price'));
+      expect(columnNames, contains('final_price'));
+      expect(columnNames, contains('payment_method'));
+      expect(columnNames, contains('ordered_at'));
+      expect(columnNames, contains('paid_at'));
+      expect(columnNames, contains('created_by'));
+      expect(columnNames, contains('updated_at'));
+    });
+
+    test('驗證 bill_items 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='bill_items'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(bill_items)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('bill_id'));
+      expect(columnNames, contains('product_id'));
+      expect(columnNames, contains('product_name'));
+      expect(columnNames, contains('unit_price'));
+      expect(columnNames, contains('amount'));
+      expect(columnNames, contains('subtotal'));
+      expect(columnNames, contains('created_at'));
+    });
+
+    test('驗證 bill_discounts 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='bill_discounts'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(bill_discounts)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('bill_id'));
+      expect(columnNames, contains('event_id'));
+      expect(columnNames, contains('title'));
+      expect(columnNames, contains('value'));
+      expect(columnNames, contains('created_at'));
+    });
+
+    test('驗證 events 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='events'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(events)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('type'));
+      expect(columnNames, contains('title'));
+      expect(columnNames, contains('start_at'));
+      expect(columnNames, contains('end_at'));
+      expect(columnNames, contains('config'));
+      expect(columnNames, contains('off'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
+    });
+
+    test('驗證 punch_logs 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='punch_logs'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(punch_logs)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('staff_id'));
+      expect(columnNames, contains('type'));
+      expect(columnNames, contains('timestamp'));
+      expect(columnNames, contains('ip_address'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
+    });
+
+    test('驗證 shifts 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='shifts'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(shifts)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('open_amount'));
+      expect(columnNames, contains('close_amount'));
+      expect(columnNames, contains('paid_out'));
+      expect(columnNames, contains('paid_in'));
+      expect(columnNames, contains('adjustment_type'));
+      expect(columnNames, contains('adjustment_amount'));
+      expect(columnNames, contains('adjustment_by'));
+      expect(columnNames, contains('note'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('created_by'));
+    });
+
+    test('驗證 tables_info 資料表存在且結構正確', () async {
+      final result = await database.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='tables_info'",
+      );
+      expect(result, isNotEmpty);
+
+      final columns = await database.rawQuery('PRAGMA table_info(tables_info)');
+      final columnNames = columns.map((col) => col['name'] as String).toList();
+      expect(columnNames, contains('id'));
+      expect(columnNames, contains('store_id'));
+      expect(columnNames, contains('version'));
+      expect(columnNames, contains('data'));
+      expect(columnNames, contains('created_at'));
+      expect(columnNames, contains('updated_at'));
+    });
+  });
 }
