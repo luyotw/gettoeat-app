@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gettoeat_flutter/services/store_service.dart';
 
 /// 餐廳初始化設定畫面
@@ -79,8 +80,7 @@ class _InitializationScreenState extends State<InitializationScreen> {
 
       // 導向至基本設定頁面
       if (mounted) {
-        // 使用 Navigator 進行導向（稍後會在 Task 5 改用 go_router）
-        Navigator.of(context).pushReplacementNamed('/management/basic');
+        context.go('/management/basic');
       }
     } catch (e) {
       setState(() {
