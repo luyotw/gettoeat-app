@@ -42,7 +42,16 @@ void main() {
       });
 
       test('測試資料庫有資料時回傳 true', () async {
-        // Arrange - 資料庫已有預設資料
+        // Arrange - 明確插入測試資料
+        final now = DateTime.now().toIso8601String();
+        await database.insert('stores', {
+          'account': 'test_store',
+          'nickname': '測試餐廳',
+          'date_change_at': '04:00',
+          'payment_methods': '1',
+          'created_at': now,
+          'updated_at': now,
+        });
 
         // Act
         final result = await storeService.isInitialized();
