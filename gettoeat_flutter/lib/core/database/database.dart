@@ -269,6 +269,109 @@ class AppDatabase {
       'created_at': now,
       'updated_at': now,
     });
+
+    // 插入商品分類
+    await db.insert('categories', {
+      'store_id': 1,
+      'name': '飲品',
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('categories', {
+      'store_id': 1,
+      'name': '食品',
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('categories', {
+      'store_id': 1,
+      'name': '甜點',
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    // 插入商品
+    await db.insert('products', {
+      'store_id': 1,
+      'category_id': 1,
+      'name': '冰紅茶',
+      'price': 35.0,
+      'position': 1,
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('products', {
+      'store_id': 1,
+      'category_id': 1,
+      'name': '熱紅茶',
+      'price': 30.0,
+      'position': 2,
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('products', {
+      'store_id': 1,
+      'category_id': 1,
+      'name': '黑咖啡',
+      'price': 50.0,
+      'position': 3,
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('products', {
+      'store_id': 1,
+      'category_id': 2,
+      'name': '米飯',
+      'price': 15.0,
+      'position': 1,
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('products', {
+      'store_id': 1,
+      'category_id': 2,
+      'name': '炒飯',
+      'price': 60.0,
+      'position': 2,
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('products', {
+      'store_id': 1,
+      'category_id': 3,
+      'name': '巧克力蛋糕',
+      'price': 80.0,
+      'position': 1,
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
+
+    await db.insert('products', {
+      'store_id': 1,
+      'category_id': 3,
+      'name': '芝士蛋糕',
+      'price': 85.0,
+      'position': 2,
+      'off': 0,
+      'created_at': now,
+      'updated_at': now,
+    });
   }
 
   /// 資料庫版本升級處理

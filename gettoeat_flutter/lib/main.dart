@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gettoeat_flutter/screens/setup/initialization.dart';
 import 'package:gettoeat_flutter/screens/management/basic.dart';
+import 'package:gettoeat_flutter/screens/products/products_screen.dart';
 import 'package:gettoeat_flutter/services/store_service.dart';
 
 void main() {
@@ -51,6 +52,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/management/basic',
       builder: (context, state) => const BasicSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/products',
+      builder: (context, state) => const ProductsScreen(),
     ),
   ],
 );
